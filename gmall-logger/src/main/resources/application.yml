@@ -1,0 +1,9 @@
+server:
+  port: 8081
+#kafka
+spring:
+  kafka:
+    bootstrap-servers: 192.168.88.71:9092,192.168.88.72:9092,192.168.88.73:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
