@@ -1,4 +1,4 @@
-package com.zhangbao.gmall.realtime.app;
+package com.zhangbao.gmall.realtime.app.dwd;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;

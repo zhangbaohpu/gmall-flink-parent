@@ -75,6 +75,32 @@
             <version>2.14.0</version>
         </dependency>
 
+        <!--lomback 插件依赖-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.12</version>
+            <scope>provided</scope>
+        </dependency>
+        <!--commons-beanutils 是 Apache 开源组织提供的用于操作 JAVA BEAN 的工具包。
+        使用 commons-beanutils，我们可以很方便的对 bean 对象的属性进行操作-->
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.9.3</version>
+        </dependency>
+        <!--Guava 工程包含了若干被 Google 的 Java 项目广泛依赖的核心库,方便开发-->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>29.0-jre</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.47</version>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>
