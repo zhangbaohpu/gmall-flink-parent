@@ -119,7 +119,10 @@ public class BaseLogTask {
                         if (startJson != null && startJson.size() > 0) {
                             context.output(startTag, dataStr);
                         } else {
-                            //判断是否曝光日志
+                            //如果不是曝光日志，则是页面日志，输出到主流
+                            collector.collect(dataStr);
+
+                            //判断是否曝光日志(曝光日志也是页面日志的一种)
                             JSONArray jsonArray = jsonObject.getJSONArray("displays");
                             if (jsonArray != null && jsonArray.size() > 0) {
                                 //给每一条曝光事件加pageId
@@ -130,10 +133,11 @@ public class BaseLogTask {
                                     disPlayObj.put("page_id", pageId);
                                     context.output(displayTag, disPlayObj.toString());
                                 }
-                            } else {
-                                //如果不是曝光日志，则是页面日志，输出到主流
-                                collector.collect(dataStr);
                             }
+//                            else {
+//                                //如果不是曝光日志，则是页面日志，输出到主流
+//                                collector.collect(dataStr);
+//                            }
                         }
                     }
                 }

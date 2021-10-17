@@ -1,7 +1,6 @@
 package com.zhangbao.gmall.realtime.app.func;
 
 import com.alibaba.fastjson.JSONObject;
-import com.google.common.base.Strings;
 import com.zhangbao.gmall.realtime.common.GmallConfig;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
