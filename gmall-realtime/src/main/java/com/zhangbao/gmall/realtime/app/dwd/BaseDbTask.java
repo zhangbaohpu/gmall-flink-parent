@@ -79,7 +79,7 @@ public class BaseDbTask {
             @Override
             public ProducerRecord<byte[], byte[]> serialize(JSONObject jsonObject, @Nullable Long aLong) {
                 String sinkTopic = jsonObject.getString("sink_table");
-                return new ProducerRecord<>(sinkTopic, jsonObject.toString().getBytes());
+                return new ProducerRecord<>(sinkTopic, jsonObject.getJSONObject("data").toString().getBytes());
             }
         });
         kafkaTag.addSink(kafkaBySchema);

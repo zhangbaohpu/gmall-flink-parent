@@ -2,6 +2,7 @@ package com.zhangbao.gmall.realtime.app.func;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zhangbao.gmall.realtime.common.GmallConfig;
+import com.zhangbao.gmall.realtime.utils.DimUtil;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.configuration.Configuration;
@@ -51,6 +52,10 @@ public class DimSink extends RichSinkFunction<JSONObject> {
                 if(ps!=null){
                     ps.close();
                 }
+            }
+            //如果是更新维度数据，则把redis数据清空
+            if(jsonObject.getString("type").endsWith("update")){
+                DimUtil.deleteCached(sinkTable,data.getString("id"));
             }
         }
     }

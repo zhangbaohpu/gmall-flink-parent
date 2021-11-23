@@ -37,11 +37,11 @@ public class BaseLogTask {
         //设置并行度，即kafka分区数
         env.setParallelism(4);
         //添加checkpoint，每5秒执行一次
-        env.enableCheckpointing(5000, CheckpointingMode.EXACTLY_ONCE);
-        env.getCheckpointConfig().setCheckpointTimeout(60000);
-        env.setStateBackend(new FsStateBackend("hdfs://hadoop101:9000/gmall/flink/checkpoint/baseLogAll"));
-        //指定哪个用户读取hdfs文件
-        System.setProperty("HADOOP_USER_NAME","zhangbao");
+//        env.enableCheckpointing(5000, CheckpointingMode.EXACTLY_ONCE);
+//        env.getCheckpointConfig().setCheckpointTimeout(60000);
+//        env.setStateBackend(new FsStateBackend("hdfs://hadoop101:9000/gmall/flink/checkpoint/baseLogAll"));
+//        //指定哪个用户读取hdfs文件
+//        System.setProperty("HADOOP_USER_NAME","zhangbao");
 
         //添加数据源，来至kafka的数据
         String topic = "ods_base_log";

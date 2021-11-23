@@ -55,8 +55,8 @@ public class UserJumpDetailApp {
         FlinkKafkaConsumer<String> kafkaSource = MyKafkaUtil.getKafkaSource(sourceTopic, group);
         DataStreamSource<String> jsonStrDs = env.addSource(kafkaSource);
 
-        /*//测试数据
-        DataStream<String> jsonStrDs = env
+        //测试数据
+        /*DataStream<String> jsonStrDs = env
          .fromElements(
                 "{\"common\":{\"mid\":\"101\"},\"page\":{\"page_id\":\"home\"},\"ts\":10000} ",
                 "{\"common\":{\"mid\":\"102\"},\"page\":{\"page_id\":\"home\"},\"ts\":12000}",
@@ -66,8 +66,8 @@ public class UserJumpDetailApp {
 
                 "{\"common\":{\"mid\":\"102\"},\"page\":{\"page_id\":\"good_list\",\"last_page_id\":" +
                         "\"detail\"},\"ts\":30000} "
-        );
-        dataStream.print("in json:");*/
+        );*/
+//        jsonStrDs.print("in json:");
 
         //对读取到的数据进行结构转换
         SingleOutputStreamOperator<JSONObject> jsonObjDs = jsonStrDs.map(jsonStr -> JSON.parseObject(jsonStr));

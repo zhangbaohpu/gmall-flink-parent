@@ -13,4 +13,7 @@ public class GmallConfig {
     //phoenix连接地址
     public static final String PHOENIX_SERVER = "jdbc:phoenix:hadoop101,hadoop102,hadoop103:2181";
 
+    //phoenix驱动
+    public static final String PHOENIX_DRIVER = "org.apache.phoenix.jdbc.PhoenixDriver";
+
 }
