@@ -2,7 +2,9 @@ package com.zhangbao.gmall.realtime.app.dwm;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.db.sql.Order;
 import com.alibaba.fastjson.JSONObject;
+import com.zhangbao.gmall.realtime.app.func.DimAsyncFunction;
 import com.zhangbao.gmall.realtime.bean.OrderDetail;
 import com.zhangbao.gmall.realtime.bean.OrderInfo;
 import com.zhangbao.gmall.realtime.bean.OrderWide;
@@ -11,6 +13,7 @@ import org.apache.flink.api.common.eventtime.SerializableTimestampAssigner;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.functions.RichMapFunction;
 import org.apache.flink.configuration.Configuration;
+import org.apache.flink.streaming.api.datastream.AsyncDataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.KeyedStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
@@ -21,6 +24,8 @@ import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer;
 import org.apache.flink.util.Collector;
 
 import java.time.Duration;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -134,7 +139,29 @@ public class OrderWideApp {
                         out.collect(new OrderWide(orderInfo, orderDetail));
                     }
                 });
-        orderWideDs.print("order wide ds >>>");
+//        orderWideDs.print("order wide ds >>>");
+
+        /**
+         * 关联用户维度数据
+         * flink异步查询
+         * https://nightlies.apache.org/flink/flink-docs-release-1.14/zh/docs/dev/datastream/operators/asyncio/#%e5%bc%82%e6%ad%a5-io-api
+         */
+        SingleOutputStreamOperator<OrderWide> orderWideWithUserDs = AsyncDataStream.unorderedWait(orderWideDs, new DimAsyncFunction<OrderWide>("DIM_USER_INFO") {
+            @Override
+            public String getKey(OrderWide obj) {
+                return obj.getUser_id().toString();
+            }
+
+            @Override
+            public void join(OrderWide orderWide, JSONObject dimInfo) {
+                Date birthday = dimInfo.getDate("BIRTHDAY");
+                Long age = DateUtil.betweenYear(birthday, new Date(), false);
+                orderWide.setUser_age(age.intValue());
+                orderWide.setUser_gender(dimInfo.getString("GENDER"));
+            }
+        }, 60, TimeUnit.SECONDS);
+
+        orderWideWithUserDs.print("order wide with users >>>");
 
 
         try {

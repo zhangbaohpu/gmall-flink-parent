@@ -14,6 +14,10 @@ import java.util.List;
  */
 public class DimUtil {
 
+
+    public static JSONObject getDimInfo(String tableName, String key) {
+        return getDimInfo(tableName,new Tuple2<>("id",key));
+    }
     /**
      * 查询优化
      * redis缓存

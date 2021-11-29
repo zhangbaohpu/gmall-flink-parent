@@ -55,7 +55,8 @@ public class PhoenixUtil {
             }
         }catch (Exception e){
             throw new RuntimeException("phoenix 查询失败 -> " + e.getMessage());
-        }finally {
+        }
+        /*finally {
             if(rs!=null){
                 try {
                     rs.close();
@@ -77,12 +78,12 @@ public class PhoenixUtil {
                     throwables.printStackTrace();
                 }
             }
-        }
+        }*/
         return resultList;
     }
 
     public static void main(String[] args) {
-        String sql = "select * from GMALL_REALTIME.BASE_TRADEMARK";
+        String sql = "select * from DIM_USER_INFO where id='28786'";
         System.out.println(getList(sql,JSONObject.class));
     }
 
