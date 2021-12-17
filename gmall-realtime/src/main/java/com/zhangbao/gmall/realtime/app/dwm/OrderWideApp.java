@@ -97,8 +97,8 @@ public class OrderWideApp {
             }
         });
 
-        orderInfoObjDs.print("order info >>>");
-        orderDetailObjDs.print("order detail >>>");
+//        orderInfoObjDs.print("order info >>>");
+//        orderDetailObjDs.print("order detail >>>");
 
         //指定事件时间字段
         //订单事件时间字段
@@ -161,7 +161,96 @@ public class OrderWideApp {
             }
         }, 60, TimeUnit.SECONDS);
 
-        orderWideWithUserDs.print("order wide with users >>>");
+//        orderWideWithUserDs.print("order wide with users >>>");
+
+        /**
+         * 关联省份维度
+         * 以上一个流为基础，关联省份数据
+         */
+        SingleOutputStreamOperator<OrderWide> orderWideWithProvinceDs = AsyncDataStream.unorderedWait(orderWideWithUserDs,
+                new DimAsyncFunction<OrderWide>("DIM_BASE_PROVINCE") {
+                    @Override
+                    public String getKey(OrderWide orderWide) {
+                        return orderWide.getProvince_id().toString();
+                    }
+                    @Override
+                    public void join(OrderWide orderWide, JSONObject dimInfo) {
+                        orderWide.setProvince_name(dimInfo.getString("NAME"));
+                        orderWide.setProvince_iso_code(dimInfo.getString("ISO_CODE"));
+                        orderWide.setProvince_area_code(dimInfo.getString("AREA_CODE"));
+                        orderWide.setProvince_3166_2_code(dimInfo.getString("ISO_3166_2"));
+                    }
+                }, 60, TimeUnit.SECONDS);
+//        orderWideWithProvinceDs.print("order wide with province>>>");
+
+        /**
+         * 关联sku数据
+         */
+        SingleOutputStreamOperator<OrderWide> orderWideWithSkuDs = AsyncDataStream.unorderedWait(orderWideWithProvinceDs,
+                new DimAsyncFunction<OrderWide>("DIM_SKU_INFO") {
+                    @Override
+                    public String getKey(OrderWide orderWide) {
+                        return orderWide.getSku_id().toString();
+                    }
+
+                    @Override
+                    public void join(OrderWide orderWide, JSONObject dimInfo) {
+                        orderWide.setSku_name(dimInfo.getString("SKU_NAME"));
+                        orderWide.setSpu_id(dimInfo.getLong("SPU_ID"));
+                        orderWide.setCategory3_id(dimInfo.getLong("CATEGORY3_ID"));
+                        orderWide.setTm_id(dimInfo.getLong("TM_ID"));
+                    }
+                }, 60, TimeUnit.SECONDS);
+
+        /**
+         * 关联spu数据
+         */
+        SingleOutputStreamOperator<OrderWide> orderWideWithSpuDs = AsyncDataStream.unorderedWait(orderWideWithSkuDs, new DimAsyncFunction<OrderWide>("DIM_SPU_INFO") {
+            @Override
+            public String getKey(OrderWide orderWide) {
+                return orderWide.getSpu_id().toString();
+            }
+
+            @Override
+            public void join(OrderWide orderWide, JSONObject dimInfo) {
+                orderWide.setSpu_name(dimInfo.getString("SPU_NAME"));
+
+            }
+        }, 60, TimeUnit.SECONDS);
+
+        /**
+         * 关联品类数据
+         */
+
+        SingleOutputStreamOperator<OrderWide> orderWideWithCategoryDs = AsyncDataStream.unorderedWait(orderWideWithSpuDs, new DimAsyncFunction<OrderWide>("DIM_BASE_CATEGORY3") {
+            @Override
+            public String getKey(OrderWide orderWide) {
+                return orderWide.getCategory3_id().toString();
+            }
+
+            @Override
+            public void join(OrderWide orderWide, JSONObject dimInfo) {
+                orderWide.setCategory3_name(dimInfo.getString("NAME"));
+            }
+        }, 60, TimeUnit.SECONDS);
+
+        /**
+         * 关联品牌数据
+         */
+
+        SingleOutputStreamOperator<OrderWide> orderWideWithTmDs = AsyncDataStream.unorderedWait(orderWideWithCategoryDs, new DimAsyncFunction<OrderWide>("DIM_BASE_TRADEMARK") {
+            @Override
+            public String getKey(OrderWide orderWide) {
+                return orderWide.getTm_id().toString();
+            }
+
+            @Override
+            public void join(OrderWide orderWide, JSONObject dimInfo) {
+                orderWide.setTm_name(dimInfo.getString("TM_NAME"));
+            }
+        }, 60, TimeUnit.SECONDS);
+
+        orderWideWithTmDs.print("order wide with sku_spu_category_tm >>> ");
 
 
         try {
